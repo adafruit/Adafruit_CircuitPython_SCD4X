@@ -9,14 +9,17 @@ i2c = board.I2C()
 scd4x = adafruit_scd4x.SCD4X(i2c)
 print("Serial number:", [hex(i) for i in scd4x.serial_number])
 
-# The reinit command reinitializes the sensor by reloading user settings from EEPROM.
-#scd4x.reinit()
+# The reinit command reinitializes the sensor by reloading user settings
+# from EEPROM.
+# scd4x.reinit()
 
-# The perform_factory_reset command resets all configuration settings stored in the EEPROM and erases the FRC and ASC algorithm history.
-#scd4x.factory_reset()
+# The perform_factory_reset command resets all configuration settings
+# stored in the EEPROM and erases the FRC and ASC algorithm history.
+# scd4x.factory_reset()
 
-# The perform_self_test feature can be used as an end-of-line test to check sensor functionality and the customer power supply to the sensor.
-#scd4x.self_test()
+# The perform_self_test feature can be used as an end-of-line test to
+# check sensor functionality and the customer power supply to the sensor.
+# scd4x.self_test()
 
 # You can set the temperature offset (default hardware is 4*C)
 scd4x.temperature_offset = 5.4
@@ -24,7 +27,8 @@ scd4x.temperature_offset = 5.4
 # You can set the altitude offset (default hardware is 0m)
 scd4x.altitude = 150
 
-# Set the current state (enabled / disabled) of the automatic self-calibration. By default, ASC is enabled
+# Set the current state (enabled / disabled) of the automatic self-calibration.
+# By default, ASC is enabled
 scd4x.self_calibration_enabled = False
 
 # Once set, you may want to permanently write these settings to EEPROM
@@ -46,4 +50,3 @@ while True:
         print("Humidity: %0.1f %%" % scd4x.relative_humidity)
         print()
     time.sleep(1)
-

@@ -28,7 +28,7 @@ Implementation Notes
 
 # imports
 import time
-from struct import unpack_from, unpack
+import struct
 import adafruit_bus_device.i2c_device as i2c_device
 from micropython import const
 
@@ -54,6 +54,7 @@ SCD4X_SETPRESSURE = const(0xE000)
 SCD4X_PERSISTSETTINGS = const(0x3615)
 SCD4X_GETASCE = const(0x2313)
 SCD4X_SETASCE = const(0x2416)
+
 
 class SCD4X:
     """
@@ -98,7 +99,7 @@ class SCD4X:
         self._buffer = bytearray(18)
         self._cmd = bytearray(2)
         self._crc_buffer = bytearray(2)
-        
+
         # cached readings
         self._temperature = None
         self._relative_humidity = None
@@ -117,7 +118,7 @@ class SCD4X:
         if self.data_ready:
             self._read_data()
         return self._co2
-        
+
     @property
     def temperature(self):
         """Returns the current temperature in degrees Celsius
@@ -148,7 +149,8 @@ class SCD4X:
         self._send_command(SCD4X_REINIT, cmd_delay=0.02)
 
     def factory_reset(self):
-        """Resets all configuration settings stored in the EEPROM and erases the FRC and ASC algorithm history."""
+        """Resets all configuration settings stored in the EEPROM and erases the
+        FRC and ASC algorithm history."""
         self.stop_periodic_measurement()
         self._send_command(SCD4X_FACTORYRESET, cmd_delay=1.2)
 
@@ -158,9 +160,12 @@ class SCD4X:
         self._set_command_value(SCD4X_FORCEDRECAL, target_co2)
         time.sleep(0.5)
         self._read_reply(self._buffer, 3)
-        correction = unpack_from(">h", self._buffer[0:2])[0]
+        correction = struct.unpack_from(">h", self._buffer[0:2])[0]
         if correction == 0xFFFF:
-            raise RuntimeError("Forced recalibration failed, make sure sensor is active for 3 minutes first")
+            raise RuntimeError(
+                "Forced recalibration failed.\
+            Make sure sensor is active for 3 minutes first"
+            )
 
     @property
     def self_calibration_enabled(self):
@@ -169,17 +174,17 @@ class SCD4X:
         per day. Consult the manufacturer's documentation for more information.
 
         .. note::
-            This value will NOT be saved and will be reset on boot unless saved with persist_settings().
+            This value will NOT be saved and will be reset on boot unless
+            saved with persist_settings().
 
         """
         self._send_command(SCD4X_GETASCE, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
-        return (self._buffer[1] == 1)
+        return self._buffer[1] == 1
 
     @self_calibration_enabled.setter
     def self_calibration_enabled(self, enabled):
         self._set_command_value(SCD4X_SETASCE, enabled)
-
 
     def self_test(self):
         """Performs a self test, takes up to 10 seconds"""
@@ -194,10 +199,10 @@ class SCD4X:
         self._send_command(SCD4X_READMEASUREMENT, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
         self._co2 = (self._buffer[0] << 8) | self._buffer[1]
-        t = (self._buffer[3] << 8) | self._buffer[4]
-        self._temperature = -45 + 175 * (t/2**16)
-        h = (self._buffer[6] << 8) | self._buffer[7]
-        self._relative_humidity = 100 * (h/2**16)
+        temp = (self._buffer[3] << 8) | self._buffer[4]
+        self._temperature = -45 + 175 * (temp / 2 ** 16)
+        humi = (self._buffer[6] << 8) | self._buffer[7]
+        self._relative_humidity = 100 * (humi / 2 ** 16)
 
     @property
     def data_ready(self):
@@ -205,15 +210,20 @@ class SCD4X:
         self._send_command(SCD4X_DATAREADY, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
         return not ((self._buffer[0] & 0x03 == 0) and (self._buffer[1] == 0))
-    
+
     @property
     def serial_number(self):
         """Request a 6-tuple containing the unique serial number for this sensor"""
         self._send_command(SCD4X_SERIALNUMBER, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
-        return (self._buffer[0], self._buffer[1],
-                self._buffer[3], self._buffer[4],
-                self._buffer[6], self._buffer[7])
+        return (
+            self._buffer[0],
+            self._buffer[1],
+            self._buffer[3],
+            self._buffer[4],
+            self._buffer[6],
+            self._buffer[7],
+        )
 
     def stop_periodic_measurement(self):
         """Stop measurement mode"""
@@ -222,12 +232,13 @@ class SCD4X:
     def start_periodic_measurement(self):
         """Put sensor into working mode, about 5s per measurement"""
         self._send_command(SCD4X_STARTPERIODICMEASUREMENT, cmd_delay=0.01)
-        
+
     def persist_settings(self):
         """Save temperature offset, altitude offset, and selfcal enable settings to EEPROM"""
         self._send_command(SCD4X_PERSISTSETTINGS, cmd_delay=0.8)
 
     def set_ambient_pressure(self, ambient_pressure):
+        """Set the ambient pressure in hPa at any time to adjust CO2 calculations"""
         if ambient_pressure < 0 or ambient_pressure > 65535:
             raise AttributeError("`ambient_pressure` must be from 0~65535 hPascals")
         self._set_command_value(SCD4X_SETPRESSURE, ambient_pressure)
@@ -239,14 +250,14 @@ class SCD4X:
         maximum value of 374 *C
 
         .. note::
-            This value will NOT be saved and will be reset on boot unless saved with persist_settings().
+            This value will NOT be saved and will be reset on boot unless saved with
+            persist_settings().
 
         """
         self._send_command(SCD4X_GETTEMPOFFSET, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
-        t = (self._buffer[0] << 8) | self._buffer[1]
-        return 175.0 * t / 2**16
-
+        temp = (self._buffer[0] << 8) | self._buffer[1]
+        return 175.0 * temp / 2 ** 16
 
     @temperature_offset.setter
     def temperature_offset(self, offset):
@@ -254,9 +265,8 @@ class SCD4X:
             raise AttributeError(
                 "Offset value must be less than or equal to 374 degrees Celsius"
             )
-        t = int(offset * 2**16 / 175)
-        self._set_command_value(SCD4X_SETTEMPOFFSET, t)
-
+        temp = int(offset * 2 ** 16 / 175)
+        self._set_command_value(SCD4X_SETTEMPOFFSET, temp)
 
     @property
     def altitude(self):
@@ -265,7 +275,8 @@ class SCD4X:
         on readings.
 
         .. note::
-            This value will NOT be saved and will be reset on boot unless saved with persist_settings().
+            This value will NOT be saved and will be reset on boot unless saved with
+            persist_settings().
         """
         self._send_command(SCD4X_GETALTITUDE, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
@@ -274,24 +285,21 @@ class SCD4X:
     @altitude.setter
     def altitude(self, height):
         if height > 65535:
-            raise AttributeError(
-                "Height must be less than or equal to 65535 meters"
-            )
+            raise AttributeError("Height must be less than or equal to 65535 meters")
         self._set_command_value(SCD4X_SETALTITUDE, height)
-            
+
     def _check_buffer_crc(self, buf):
         for i in range(0, len(buf), 3):
             self._crc_buffer[0] = buf[i]
-            self._crc_buffer[1] = buf[i+1]
-            if self._crc8(self._crc_buffer) != buf[i+2]:
+            self._crc_buffer[1] = buf[i + 1]
+            if self._crc8(self._crc_buffer) != buf[i + 2]:
                 raise RuntimeError("CRC check failed while reading data")
         return True
-    
-        
+
     def _send_command(self, cmd, cmd_delay=0):
         self._cmd[0] = (cmd >> 8) & 0xFF
         self._cmd[1] = cmd & 0xFF
-        
+
         with self.i2c_device as i2c:
             i2c.write(self._cmd, end=2)
         time.sleep(cmd_delay)
@@ -304,12 +312,13 @@ class SCD4X:
         self._buffer[4] = self._crc8(self._crc_buffer)
         with self.i2c_device as i2c:
             i2c.write(self._buffer, end=5)
+        time.sleep(cmd_delay)
 
-    def _read_reply(self, buff, len):
+    def _read_reply(self, buff, num):
         with self.i2c_device as i2c:
-            i2c.readinto(buff, end=len)
-        self._check_buffer_crc(self._buffer[0:len])
-        
+            i2c.readinto(buff, end=num)
+        self._check_buffer_crc(self._buffer[0:num])
+
     @staticmethod
     def _crc8(buffer):
         crc = 0xFF
