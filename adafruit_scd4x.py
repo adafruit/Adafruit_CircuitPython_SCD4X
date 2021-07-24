@@ -247,7 +247,7 @@ class SCD4X:
     def temperature_offset(self):
         """Specifies the offset to be added to the reported measurements to account for a bias in
         the measured signal. Value is in degrees Celsius with a resolution of 0.01 degrees and a
-        maximum value of 374 *C
+        maximum value of 374 C
 
         .. note::
             This value will NOT be saved and will be reset on boot unless saved with
