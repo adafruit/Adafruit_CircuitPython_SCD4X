@@ -26,7 +26,6 @@ Implementation Notes
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
-# imports
 import time
 import struct
 import adafruit_bus_device.i2c_device as i2c_device
@@ -61,7 +60,6 @@ class SCD4X:
     CircuitPython helper class for using the SCD4X CO2 sensor
 
     :param ~busio.I2C i2c_bus: The I2C bus the SCD4X is connected to.
-    :param int ambient_pressure: Ambient pressure compensation. Defaults to :const:`0`
     :param int address: The I2C device address for the sensor. Default is :const:`0x62`
 
     **Quickstart: Importing and using the SCD4X**
