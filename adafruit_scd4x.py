@@ -43,6 +43,7 @@ _SCD4X_SELFTEST = const(0x3639)
 _SCD4X_DATAREADY = const(0xE4B8)
 _SCD4X_STOPPERIODICMEASUREMENT = const(0x3F86)
 _SCD4X_STARTPERIODICMEASUREMENT = const(0x21B1)
+_SCD4X_STARTLOWPOWERPERIODICMEASUREMENT = const(0x21AC)
 _SCD4X_READMEASUREMENT = const(0xEC05)
 _SCD4X_SERIALNUMBER = const(0x3682)
 _SCD4X_GETTEMPOFFSET = const(0x2318)
@@ -230,6 +231,10 @@ class SCD4X:
     def start_periodic_measurement(self):
         """Put sensor into working mode, about 5s per measurement"""
         self._send_command(_SCD4X_STARTPERIODICMEASUREMENT, cmd_delay=0.01)
+
+    def start_low_periodic_measurement(self):
+        """Put sensor into low power working mode, about 30s per measurement"""
+        self._send_command(_SCD4X_STARTLOWPOWERPERIODICMEASUREMENT, cmd_delay=0.01)
 
     def persist_settings(self):
         """Save temperature offset, altitude offset, and selfcal enable settings to EEPROM"""
