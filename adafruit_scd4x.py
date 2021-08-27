@@ -145,12 +145,12 @@ class SCD4X:
         return self._relative_humidity
 
     def measure_single_shot(self):
-        """On-demand measurement of CO2 concentration, relative humidity, and 
+        """On-demand measurement of CO2 concentration, relative humidity, and
         temperature for SCD41 only"""
         self._send_command(_SCD4X_MEASURESINGLESHOT, cmd_delay=5)
 
     def measure_single_shot_rht_only(self):
-        """On-demand measurement of relative humidity and temperature for 
+        """On-demand measurement of relative humidity and temperature for
         SCD41 only"""
         self._send_command(_SCD4X_MEASURESINGLESHOTRHTONLY, cmd_delay=0.05)
 
