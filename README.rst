@@ -116,6 +116,11 @@ Usage Example
             print()
         time.sleep(1)
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/scd4x/en/latest/>`_.
+
 Contributing
 ============
 
