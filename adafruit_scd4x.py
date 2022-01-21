@@ -208,7 +208,7 @@ class SCD4X:
         """Check the sensor to see if new data is available"""
         self._send_command(_SCD4X_DATAREADY, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
-        return not ((self._buffer[0] & 0x03 == 0) and (self._buffer[1] == 0))
+        return not ((self._buffer[0] & 0x07 == 0) and (self._buffer[1] == 0))
 
     @property
     def serial_number(self):
