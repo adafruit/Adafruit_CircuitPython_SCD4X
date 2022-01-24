@@ -3,7 +3,7 @@ Introduction
 
 
 .. image:: https://readthedocs.org/projects/adafruit-circuitpython-scd4x/badge/?version=latest
-    :target: https://circuitpython.readthedocs.io/projects/scd4x/en/latest/
+    :target: https://docs.circuitpython.org/projects/scd4x/en/latest/
     :alt: Documentation Status
 
 
@@ -119,7 +119,7 @@ Usage Example
 Documentation
 =============
 
-API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/scd4x/en/latest/>`_.
+API documentation for this library can be found on `Read the Docs <https://docs.circuitpython.org/projects/scd4x/en/latest/>`_.
 
 Contributing
 ============
