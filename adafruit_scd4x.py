@@ -326,8 +326,8 @@ class SCD4X:
                 i2c.write(self._cmd, end=2)
         except OSError as err:
             raise RuntimeError(
-                "Could not communicate via I2C, some commands/settings \
-                    unavailable while in working mode"
+                "Could not communicate via I2C, some commands/settings "
+                "unavailable while in working mode"
             ) from err
         time.sleep(cmd_delay)
 
