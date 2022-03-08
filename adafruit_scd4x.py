@@ -249,7 +249,8 @@ class SCD4X:
 
     def start_low_periodic_measurement(self):
         """Put sensor into low power working mode, about 30s per measurement. See
-        `SCD4X.start_perodic_measurement` for more details.
+        :meth:`start_periodic_measurement() <adafruit_scd4x.SCD4X.start_perodic_measurement>`
+        for more details.
         """
         self._send_command(_SCD4X_STARTLOWPOWERPERIODICMEASUREMENT)
 
