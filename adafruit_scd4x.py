@@ -229,11 +229,29 @@ class SCD4X:
         self._send_command(_SCD4X_STOPPERIODICMEASUREMENT, cmd_delay=0.5)
 
     def start_periodic_measurement(self):
-        """Put sensor into working mode, about 5s per measurement"""
+        """Put sensor into working mode, about 5s per measurement
+
+        .. note::
+            Only the following commands will work once in working mode:
+
+            * :attr:`CO2 <adafruit_scd4x.SCD4X.CO2>`
+            * :attr:`temperature <adafruit_scd4x.SCD4X.temperature>`
+            * :attr:`relative_humidity <adafruit_scd4x.SCD4X.relative_humidity>`
+            * :meth:`data_ready() <adafruit_scd4x.SCD4x.data_ready>`
+            * :meth:`reinit() <adafruit_scd4x.SCD4X.reinit>`
+            * :meth:`factory_reset() <adafruit_scd4x.SCD4X.factory_reset>`
+            * :meth:`force_calibration() <adafruit_scd4x.SCD4X.force_calibration>`
+            * :meth:`self_test() <adafruit_scd4x.SCD4X.self_test>`
+            * :meth:`set_ambient_pressure() <adafruit_scd4x.SCD4X.set_ambient_pressure>`
+
+        """
         self._send_command(_SCD4X_STARTPERIODICMEASUREMENT)
 
     def start_low_periodic_measurement(self):
-        """Put sensor into low power working mode, about 30s per measurement"""
+        """Put sensor into low power working mode, about 30s per measurement. See
+        :meth:`start_periodic_measurement() <adafruit_scd4x.SCD4X.start_perodic_measurement>`
+        for more details.
+        """
         self._send_command(_SCD4X_STARTLOWPOWERPERIODICMEASUREMENT)
 
     def persist_settings(self):
@@ -303,8 +321,14 @@ class SCD4X:
         self._cmd[0] = (cmd >> 8) & 0xFF
         self._cmd[1] = cmd & 0xFF
 
-        with self.i2c_device as i2c:
-            i2c.write(self._cmd, end=2)
+        try:
+            with self.i2c_device as i2c:
+                i2c.write(self._cmd, end=2)
+        except OSError as err:
+            raise RuntimeError(
+                "Could not communicate via I2C, some commands/settings "
+                "unavailable while in working mode"
+            ) from err
         time.sleep(cmd_delay)
 
     def _set_command_value(self, cmd, value, cmd_delay=0):
