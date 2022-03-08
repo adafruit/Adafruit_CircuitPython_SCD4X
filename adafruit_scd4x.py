@@ -234,15 +234,15 @@ class SCD4X:
         .. note::
             Only the following commands will work once in working mode:
 
-            * `SCD4X.CO2`
-            * `SCD4X.temperature`
-            * `SCD4X.relative_humidity`
-            * `SCD4x.data_ready()`
-            * `SCD4X.reinit()`
-            * `SCD4X.factory_reset()`
-            * `SCD4X.force_calibration()`
-            * `SCD4X.self_test()`
-            * `SCD4X.set_ambient_pressure()`
+            * :attr:`CO2 <adafruit_scd4x.SCD4X.CO2>`
+            * :attr:`temperature <adafruit_scd4x.SCD4X.temperature>`
+            * :attr:`relative_humidity <adafruit_scd4x.SCD4X.relative_humidity>`
+            * :meth:`data_ready() <adafruit_scd4x.SCD4x.data_ready>`
+            * :meth:`reinit() <adafruit_scd4x.SCD4X.reinit>`
+            * :meth:`factory_reset() <adafruit_scd4x.SCD4X.factory_reset>`
+            * :meth:`force_calibration() <adafruit_scd4x.SCD4X.force_calibration>`
+            * :meth:`self_test() <adafruit_scd4x.SCD4X.self_test>`
+            * :meth:`set_ambient_pressure() <adafruit_scd4x.SCD4X.set_ambient_pressure>`
 
         """
         self._send_command(_SCD4X_STARTPERIODICMEASUREMENT)
