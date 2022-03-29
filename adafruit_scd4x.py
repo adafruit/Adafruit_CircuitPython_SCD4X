@@ -199,9 +199,9 @@ class SCD4X:
         self._read_reply(self._buffer, 9)
         self._co2 = (self._buffer[0] << 8) | self._buffer[1]
         temp = (self._buffer[3] << 8) | self._buffer[4]
-        self._temperature = -45 + 175 * (temp / 2 ** 16)
+        self._temperature = -45 + 175 * (temp / 2**16)
         humi = (self._buffer[6] << 8) | self._buffer[7]
-        self._relative_humidity = 100 * (humi / 2 ** 16)
+        self._relative_humidity = 100 * (humi / 2**16)
 
     @property
     def data_ready(self):
@@ -278,7 +278,7 @@ class SCD4X:
         self._send_command(_SCD4X_GETTEMPOFFSET, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
         temp = (self._buffer[0] << 8) | self._buffer[1]
-        return 175.0 * temp / 2 ** 16
+        return 175.0 * temp / 2**16
 
     @temperature_offset.setter
     def temperature_offset(self, offset):
@@ -286,7 +286,7 @@ class SCD4X:
             raise AttributeError(
                 "Offset value must be less than or equal to 374 degrees Celsius"
             )
-        temp = int(offset * 2 ** 16 / 175)
+        temp = int(offset * 2**16 / 175)
         self._set_command_value(_SCD4X_SETTEMPOFFSET, temp)
 
     @property
