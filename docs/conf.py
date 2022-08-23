@@ -6,6 +6,7 @@
 
 import os
 import sys
+import datetime
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -50,7 +51,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "Adafruit CircuitPython SCD4X Library"
-copyright = "2021 ladyada"
+current_year = str(datetime.datetime.now().year)
+copyright = current_year + " ladyada"
 author = "ladyada"
 
 # The version info for the project you're documenting, acts as replacement for
