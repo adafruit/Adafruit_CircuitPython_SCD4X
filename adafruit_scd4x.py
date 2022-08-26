@@ -31,6 +31,11 @@ import struct
 from adafruit_bus_device import i2c_device
 from micropython import const
 
+try:
+    from typing import Optional, Union  # pylint: disable=unused-import
+    from busio import I2C
+except ImportError:
+    pass
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SCD4X.git"
@@ -93,7 +98,7 @@ class SCD4X:
 
     """
 
-    def __init__(self, i2c_bus, address=SCD4X_DEFAULT_ADDR):
+    def __init__(self, i2c_bus: I2C, address: int = SCD4X_DEFAULT_ADDR) -> None:
         self.i2c_device = i2c_device.I2CDevice(i2c_bus, address)
         self._buffer = bytearray(18)
         self._cmd = bytearray(2)
@@ -107,7 +112,7 @@ class SCD4X:
         self.stop_periodic_measurement()
 
     @property
-    def CO2(self):  # pylint:disable=invalid-name
+    def CO2(self) -> int:  # pylint:disable=invalid-name
         """Returns the CO2 concentration in PPM (parts per million)
 
         .. note::
@@ -119,7 +124,7 @@ class SCD4X:
         return self._co2
 
     @property
-    def temperature(self):
+    def temperature(self) -> float:
         """Returns the current temperature in degrees Celsius
 
         .. note::
@@ -131,7 +136,7 @@ class SCD4X:
         return self._temperature
 
     @property
-    def relative_humidity(self):
+    def relative_humidity(self) -> float:
         """Returns the current relative humidity in %rH.
 
         .. note::
@@ -142,18 +147,18 @@ class SCD4X:
             self._read_data()
         return self._relative_humidity
 
-    def reinit(self):
+    def reinit(self) -> None:
         """Reinitializes the sensor by reloading user settings from EEPROM."""
         self.stop_periodic_measurement()
         self._send_command(_SCD4X_REINIT, cmd_delay=0.02)
 
-    def factory_reset(self):
+    def factory_reset(self) -> None:
         """Resets all configuration settings stored in the EEPROM and erases the
         FRC and ASC algorithm history."""
         self.stop_periodic_measurement()
         self._send_command(_SCD4X_FACTORYRESET, cmd_delay=1.2)
 
-    def force_calibration(self, target_co2):
+    def force_calibration(self, target_co2: int) -> None:
         """Forces the sensor to recalibrate with a given current CO2"""
         self.stop_periodic_measurement()
         self._set_command_value(_SCD4X_FORCEDRECAL, target_co2)
@@ -167,7 +172,7 @@ class SCD4X:
             )
 
     @property
-    def self_calibration_enabled(self):
+    def self_calibration_enabled(self) -> bool:
         """Enables or disables automatic self calibration (ASC). To work correctly, the sensor must
         be on and active for 7 days after enabling ASC, and exposed to fresh air for at least 1 hour
         per day. Consult the manufacturer's documentation for more information.
@@ -182,10 +187,10 @@ class SCD4X:
         return self._buffer[1] == 1
 
     @self_calibration_enabled.setter
-    def self_calibration_enabled(self, enabled):
+    def self_calibration_enabled(self, enabled: bool) -> None:
         self._set_command_value(_SCD4X_SETASCE, enabled)
 
-    def self_test(self):
+    def self_test(self) -> None:
         """Performs a self test, takes up to 10 seconds"""
         self.stop_periodic_measurement()
         self._send_command(_SCD4X_SELFTEST, cmd_delay=10)
@@ -193,7 +198,7 @@ class SCD4X:
         if (self._buffer[0] != 0) or (self._buffer[1] != 0):
             raise RuntimeError("Self test failed")
 
-    def _read_data(self):
+    def _read_data(self) -> None:
         """Reads the temp/hum/co2 from the sensor and caches it"""
         self._send_command(_SCD4X_READMEASUREMENT, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
@@ -204,14 +209,14 @@ class SCD4X:
         self._relative_humidity = 100 * (humi / 2**16)
 
     @property
-    def data_ready(self):
+    def data_ready(self) -> bool:
         """Check the sensor to see if new data is available"""
         self._send_command(_SCD4X_DATAREADY, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
         return not ((self._buffer[0] & 0x07 == 0) and (self._buffer[1] == 0))
 
     @property
-    def serial_number(self):
+    def serial_number(self) -> bytearray:
         """Request a 6-tuple containing the unique serial number for this sensor"""
         self._send_command(_SCD4X_SERIALNUMBER, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
@@ -224,11 +229,11 @@ class SCD4X:
             self._buffer[7],
         )
 
-    def stop_periodic_measurement(self):
+    def stop_periodic_measurement(self) -> None:
         """Stop measurement mode"""
         self._send_command(_SCD4X_STOPPERIODICMEASUREMENT, cmd_delay=0.5)
 
-    def start_periodic_measurement(self):
+    def start_periodic_measurement(self) -> None:
         """Put sensor into working mode, about 5s per measurement
 
         .. note::
@@ -247,25 +252,25 @@ class SCD4X:
         """
         self._send_command(_SCD4X_STARTPERIODICMEASUREMENT)
 
-    def start_low_periodic_measurement(self):
+    def start_low_periodic_measurement(self) -> None:
         """Put sensor into low power working mode, about 30s per measurement. See
         :meth:`start_periodic_measurement() <adafruit_scd4x.SCD4X.start_perodic_measurement>`
         for more details.
         """
         self._send_command(_SCD4X_STARTLOWPOWERPERIODICMEASUREMENT)
 
-    def persist_settings(self):
+    def persist_settings(self) -> None:
         """Save temperature offset, altitude offset, and selfcal enable settings to EEPROM"""
         self._send_command(_SCD4X_PERSISTSETTINGS, cmd_delay=0.8)
 
-    def set_ambient_pressure(self, ambient_pressure):
+    def set_ambient_pressure(self, ambient_pressure: int) -> None:
         """Set the ambient pressure in hPa at any time to adjust CO2 calculations"""
         if ambient_pressure < 0 or ambient_pressure > 65535:
             raise AttributeError("`ambient_pressure` must be from 0~65535 hPascals")
         self._set_command_value(_SCD4X_SETPRESSURE, ambient_pressure)
 
     @property
-    def temperature_offset(self):
+    def temperature_offset(self) -> float:
         """Specifies the offset to be added to the reported measurements to account for a bias in
         the measured signal. Value is in degrees Celsius with a resolution of 0.01 degrees and a
         maximum value of 374 C
@@ -281,7 +286,7 @@ class SCD4X:
         return 175.0 * temp / 2**16
 
     @temperature_offset.setter
-    def temperature_offset(self, offset):
+    def temperature_offset(self, offset: Union[int, float]) -> None:
         if offset > 374:
             raise AttributeError(
                 "Offset value must be less than or equal to 374 degrees Celsius"
@@ -290,7 +295,7 @@ class SCD4X:
         self._set_command_value(_SCD4X_SETTEMPOFFSET, temp)
 
     @property
-    def altitude(self):
+    def altitude(self) -> int:
         """Specifies the altitude at the measurement location in meters above sea level. Setting
         this value adjusts the CO2 measurement calculations to account for the air pressure's effect
         on readings.
@@ -304,12 +309,12 @@ class SCD4X:
         return (self._buffer[0] << 8) | self._buffer[1]
 
     @altitude.setter
-    def altitude(self, height):
+    def altitude(self, height: int) -> None:
         if height > 65535:
             raise AttributeError("Height must be less than or equal to 65535 meters")
         self._set_command_value(_SCD4X_SETALTITUDE, height)
 
-    def _check_buffer_crc(self, buf):
+    def _check_buffer_crc(self, buf: bytearray) -> bool:
         for i in range(0, len(buf), 3):
             self._crc_buffer[0] = buf[i]
             self._crc_buffer[1] = buf[i + 1]
@@ -347,7 +352,7 @@ class SCD4X:
         self._check_buffer_crc(self._buffer[0:num])
 
     @staticmethod
-    def _crc8(buffer):
+    def _crc8(buffer: bytearray) -> int:
         crc = 0xFF
         for byte in buffer:
             crc ^= byte
