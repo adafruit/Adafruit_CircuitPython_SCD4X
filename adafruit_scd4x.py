@@ -32,7 +32,7 @@ from adafruit_bus_device import i2c_device
 from micropython import const
 
 try:
-    from typing import Optional, Union, Tuple
+    from typing import Union, Tuple
     from busio import I2C
 except ImportError:
     pass
