@@ -32,7 +32,7 @@ from adafruit_bus_device import i2c_device
 from micropython import const
 
 try:
-    from typing import Optional, Union  # pylint: disable=unused-import
+    from typing import Optional, Union, Tuple  # pylint: disable=unused-import
     from busio import I2C
 except ImportError:
     pass
@@ -216,7 +216,7 @@ class SCD4X:
         return not ((self._buffer[0] & 0x07 == 0) and (self._buffer[1] == 0))
 
     @property
-    def serial_number(self) -> bytearray:
+    def serial_number(self) -> Tuple(int, int, int, int, int, int):
         """Request a 6-tuple containing the unique serial number for this sensor"""
         self._send_command(_SCD4X_SERIALNUMBER, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
