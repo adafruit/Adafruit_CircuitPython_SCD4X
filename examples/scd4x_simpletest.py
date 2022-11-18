@@ -5,7 +5,8 @@ import time
 import board
 import adafruit_scd4x
 
-i2c = board.I2C()
+i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 scd4x = adafruit_scd4x.SCD4X(i2c)
 print("Serial number:", [hex(i) for i in scd4x.serial_number])
 
