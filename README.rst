@@ -84,7 +84,7 @@ following command to install:
 
 .. code-block:: shell
 
-    circup install scd4x
+    circup install adafruit_scd4x
 
 Or the following command to update an existing version:
 
