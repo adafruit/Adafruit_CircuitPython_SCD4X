@@ -59,6 +59,8 @@ _SCD4X_SETPRESSURE = const(0xE000)
 _SCD4X_PERSISTSETTINGS = const(0x3615)
 _SCD4X_GETASCE = const(0x2313)
 _SCD4X_SETASCE = const(0x2416)
+_SCD4X_MEASURESINGLESHOT = const(0x219D)
+_SCD4X_MEASURESINGLESHOTRHTONLY = const(0x2196)
 
 
 class SCD4X:
@@ -146,6 +148,16 @@ class SCD4X:
         if self.data_ready:
             self._read_data()
         return self._relative_humidity
+
+    def measure_single_shot(self) -> None:
+        """On-demand measurement of CO2 concentration, relative humidity, and
+        temperature for SCD41 only"""
+        self._send_command(_SCD4X_MEASURESINGLESHOT, cmd_delay=5)
+
+    def measure_single_shot_rht_only(self) -> None:
+        """On-demand measurement of relative humidity and temperature for
+        SCD41 only"""
+        self._send_command(_SCD4X_MEASURESINGLESHOTRHTONLY, cmd_delay=0.05)
 
     def reinit(self) -> None:
         """Reinitializes the sensor by reloading user settings from EEPROM."""
