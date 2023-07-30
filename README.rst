@@ -3,11 +3,11 @@ Introduction
 
 
 .. image:: https://readthedocs.org/projects/adafruit-circuitpython-scd4x/badge/?version=latest
-    :target: https://circuitpython.readthedocs.io/projects/scd4x/en/latest/
+    :target: https://docs.circuitpython.org/projects/scd4x/en/latest/
     :alt: Documentation Status
 
 
-.. image:: https://img.shields.io/discord/327254708534116352.svg
+.. image:: https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_Bundle/main/badges/adafruit_discord.svg
     :target: https://adafru.it/discord
     :alt: Discord
 
@@ -63,8 +63,8 @@ To install in a virtual environment in your current project:
 .. code-block:: shell
 
     mkdir project-name && cd project-name
-    python3 -m venv .env
-    source .env/bin/activate
+    python3 -m venv .venv
+    source .venv/bin/activate
     pip3 install adafruit-circuitpython-scd4x
 
 
@@ -84,7 +84,7 @@ following command to install:
 
 .. code-block:: shell
 
-    circup install scd4x
+    circup install adafruit_scd4x
 
 Or the following command to update an existing version:
 
@@ -116,15 +116,16 @@ Usage Example
             print()
         time.sleep(1)
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://docs.circuitpython.org/projects/scd4x/en/latest/>`_.
+
+For information on building library documentation, please check out `this guide <https://learn.adafruit.com/creating-and-sharing-a-circuitpython-library/sharing-our-docs-on-readthedocs#sphinx-5-1>`_.
+
 Contributing
 ============
 
 Contributions are welcome! Please read our `Code of Conduct
 <https://github.com/adafruit/Adafruit_CircuitPython_SCD4X/blob/HEAD/CODE_OF_CONDUCT.md>`_
 before contributing to help this project stay welcoming.
-
-Documentation
-=============
-
-For information on building library documentation, please check out
-`this guide <https://learn.adafruit.com/creating-and-sharing-a-circuitpython-library/sharing-our-docs-on-readthedocs#sphinx-5-1>`_.
