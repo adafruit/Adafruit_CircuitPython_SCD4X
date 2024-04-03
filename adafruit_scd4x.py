@@ -216,9 +216,9 @@ class SCD4X:
         self._read_reply(self._buffer, 9)
         self._co2 = (self._buffer[0] << 8) | self._buffer[1]
         temp = (self._buffer[3] << 8) | self._buffer[4]
-        self._temperature = -45 + 175 * (temp / 2**16)
+        self._temperature = -45 + 175 * (temp / (2**16 - 1))
         humi = (self._buffer[6] << 8) | self._buffer[7]
-        self._relative_humidity = 100 * (humi / 2**16)
+        self._relative_humidity = 100 * (humi / (2**16 - 1))
 
     @property
     def data_ready(self) -> bool:
