@@ -305,8 +305,6 @@ class SCD4X:
 
     @temperature_offset.setter
     def temperature_offset(self, offset: Union[int, float]) -> None:
-        """Equation used for calculation:
-            word[0] = T_offset * ((2**16 -1) / 175)"""
         if offset > 374:
             raise AttributeError(
                 "Offset value must be less than or equal to 374 degrees Celsius"
