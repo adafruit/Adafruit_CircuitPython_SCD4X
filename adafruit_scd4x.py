@@ -214,11 +214,11 @@ class SCD4X:
         """Reads the temp/hum/co2 from the sensor and caches it"""
         self._send_command(_SCD4X_READMEASUREMENT, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
-        self._co2 = (self._buffer[0] << 8) | self._buffer[1]
+        self._co2 = (self._buffer[0] << 8) | self._buffer[1] # CO2 = word[0]
         temp = (self._buffer[3] << 8) | self._buffer[4]
-        self._temperature = -45 + 175 * (temp / 65535)
+        self._temperature = -45 + 175 * (temp / 65535) # T = -45 + 175 * (word[1] / 2**16 - 1)
         humi = (self._buffer[6] << 8) | self._buffer[7]
-        self._relative_humidity = 100 * (humi / 65535)
+        self._relative_humidity = 100 * (humi / 65535) # RH = 100 * (word[2] / (2**16 - 1))
 
     @property
     def data_ready(self) -> bool:
@@ -295,7 +295,7 @@ class SCD4X:
         self._send_command(_SCD4X_GETTEMPOFFSET, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
         temp = (self._buffer[0] << 8) | self._buffer[1]
-        return temp * 175.0 / 65535
+        return temp * 175.0 / 65535 # T_offset = word[0] * (175 / (2**16 - 1))
 
     @temperature_offset.setter
     def temperature_offset(self, offset: Union[int, float]) -> None:
@@ -303,7 +303,7 @@ class SCD4X:
             raise AttributeError(
                 "Offset value must be less than or equal to 374 degrees Celsius"
             )
-        temp = int(offset * 65535 / 175)
+        temp = int(offset * 65535 / 175) # word[0] = T_offset * ((2**16 - 1) / 175)
         self._set_command_value(_SCD4X_SETTEMPOFFSET, temp)
 
     @property
