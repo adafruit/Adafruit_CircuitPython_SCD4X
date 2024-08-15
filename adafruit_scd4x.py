@@ -211,11 +211,7 @@ class SCD4X:
             raise RuntimeError("Self test failed")
 
     def _read_data(self) -> None:
-        """Reads the temp/hum/co2 from the sensor and caches it.
-           Equations used for calculation:
-            CO2 = word[0]
-            T = -45 + 175 * (word[1] / (2**16 - 1))
-            RH = 100 * (word[2] / (2**16 - 1))"""
+        """Reads the temp/hum/co2 from the sensor and caches it"""
         self._send_command(_SCD4X_READMEASUREMENT, cmd_delay=0.001)
         self._read_reply(self._buffer, 9)
         self._co2 = (self._buffer[0] << 8) | self._buffer[1]
@@ -290,8 +286,6 @@ class SCD4X:
         """Specifies the offset to be added to the reported measurements to account for a bias in
         the measured signal. Value is in degrees Celsius with a resolution of 0.01 degrees and a
         maximum value of 374 C.
-        Equation used for calculation:
-         T_offset = word[0] * (175 / (2**16 - 1))
 
         .. note::
             This value will NOT be saved and will be reset on boot unless saved with
