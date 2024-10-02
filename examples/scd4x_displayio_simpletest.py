@@ -18,8 +18,8 @@ print("Serial number:", [hex(i) for i in scd4x.serial_number])
 
 # Put sensor into working mode, one measurement every 5s
 scd4x.start_periodic_measurement()
- 
- 
+
+
 # Example written for boards with built-in displays
 display = board.DISPLAY
 
