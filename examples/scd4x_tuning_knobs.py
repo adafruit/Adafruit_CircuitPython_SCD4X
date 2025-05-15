@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: Unlicense
 import time
+
 import board
+
 import adafruit_scd4x
 
 i2c = board.I2C()  # uses board.SCL and board.SDA

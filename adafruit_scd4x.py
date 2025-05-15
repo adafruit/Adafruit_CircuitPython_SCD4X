@@ -26,13 +26,15 @@ Implementation Notes
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
-import time
 import struct
+import time
+
 from adafruit_bus_device import i2c_device
 from micropython import const
 
 try:
     from typing import Tuple, Union
+
     from busio import I2C
 except ImportError:
     pass
@@ -303,9 +305,7 @@ class SCD4X:
     @temperature_offset.setter
     def temperature_offset(self, offset: Union[int, float]) -> None:
         if offset > 374:
-            raise AttributeError(
-                "Offset value must be less than or equal to 374 degrees Celsius"
-            )
+            raise AttributeError("Offset value must be less than or equal to 374 degrees Celsius")
         temp = int(offset * 65535 / 175)  # word[0] = T_offset * ((2**16 - 1) / 175)
         self._set_command_value(_SCD4X_SETTEMPOFFSET, temp)
 
