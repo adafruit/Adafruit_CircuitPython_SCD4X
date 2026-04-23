@@ -17,9 +17,9 @@ scd4x.measure_single_shot()
 sample_counter = 0
 while sample_counter < 3:
     if scd4x.data_ready:
-        print("CO2: %d ppm" % scd4x.CO2)
-        print("Temperature: %0.1f *C" % scd4x.temperature)
-        print("Humidity: %0.1f %%" % scd4x.relative_humidity)
+        print(f"CO2: {scd4x.CO2:d} ppm")
+        print(f"Temperature: {scd4x.temperature:0.1f} *C")
+        print(f"Humidity: {scd4x.relative_humidity:0.1f} %")
         print()
         scd4x.measure_single_shot()
         sample_counter += 1
@@ -34,9 +34,9 @@ scd4x.measure_single_shot_rht_only()
 sample_counter = 0
 while sample_counter < 3:
     if scd4x.data_ready:
-        print("CO2: %d ppm" % scd4x.CO2)  # Should be 0 ppm
-        print("Temperature: %0.1f *C" % scd4x.temperature)
-        print("Humidity: %0.1f %%" % scd4x.relative_humidity)
+        print(f"CO2: {scd4x.CO2:d} ppm")  # Should be 0 ppm
+        print(f"Temperature: {scd4x.temperature:0.1f} *C")
+        print(f"Humidity: {scd4x.relative_humidity:0.1f} %")
         print()
         scd4x.measure_single_shot_rht_only()
         sample_counter += 1

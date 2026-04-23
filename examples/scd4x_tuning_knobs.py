@@ -48,8 +48,8 @@ print("Waiting for first measurement....")
 
 while True:
     if scd4x.data_ready:
-        print("CO2: %d ppm" % scd4x.CO2)
-        print("Temperature: %0.1f *C" % scd4x.temperature)
-        print("Humidity: %0.1f %%" % scd4x.relative_humidity)
+        print(f"CO2: {scd4x.CO2:d} ppm")
+        print(f"Temperature: {scd4x.temperature:0.1f} *C")
+        print(f"Humidity: {scd4x.relative_humidity:0.1f} %")
         print()
     time.sleep(1)
